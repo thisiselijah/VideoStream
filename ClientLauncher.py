@@ -9,16 +9,12 @@ if __name__ == "__main__":
 		rtpPort = sys.argv[3]
 		fileName = sys.argv[4]	
 	except:
-		print("[Usage: ClientLauncher.py Server_name Server_port RTP_port Video_file]\n")	
+		print ("[Usage: ClientLauncher.py Server_name Server_port RTP_port Video_file]\n")	
 	
 	root = Tk()
 	
 	# Create a new client
-	app = Client(root, "localhost", "65535", "1024", "movie.Mjpeg") # fill Source IP address and Source port...
-	app.master.title("RTPClient")
-
-
-
-
+	app = Client(root, 'localhost', '65535', '1024', 'movie.Mjpeg')
+	app.master.title("RTPClient")	
 	root.mainloop()
 	

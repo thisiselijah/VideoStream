@@ -10,14 +10,15 @@ class Server:
 		except:
 			print("[Usage: Server.py Server_port]\n")
 		rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		rtspSocket.bind(('172.19.1.211', 65535))
+		rtspSocket.bind(('172.17.140.180', 65535))  # fill with IP address and port
 		rtspSocket.listen(5)        
 
 		# Receive client info (address,port) through RTSP/TCP session
 		while True:
 			clientInfo = {}
 			clientInfo['rtspSocket'] = rtspSocket.accept()
-			ServerWorker(clientInfo).run()		
+			ServerWorker(clientInfo).run()
+
 
 if __name__ == "__main__":
 	(Server()).main()

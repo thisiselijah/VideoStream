@@ -13,8 +13,8 @@ if __name__ == "__main__":
 	
 	root = Tk()
 	
-	# Create a new client 172.20.10.3
-	app = Client(root, "172.19.1.211", "65535", "65535", "movie.Mjpeg")
+	# Create a new client
+	app = Client(root, "172.17.140.180", "65535", "65535", "movie.Mjpeg") # fill Source IP address and Source port...
 	app.master.title("RTPClient")
 
 

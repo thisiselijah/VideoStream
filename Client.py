@@ -145,66 +145,65 @@ class Client:
 			self.rtspSocket.connect((self.serverAddr, self.serverPort))
 		except:
 			tkMessageBox.showwarning('Connection Failed', 'Connection to \'%s\' failed.' %self.serverAddr)
-	
+
 	def sendRtspRequest(self, requestCode):
-		"""Send RTSP request to the server."""	
+		"""Send RTSP request to the server."""
 		#-------------
 		# TO COMPLETE
 		#-------------
-		
+
 		# Setup request
 		if requestCode == self.SETUP and self.state == self.INIT:
 			threading.Thread(target=self.recvRtspReply).start()
 			# Update RTSP sequence number.
 			self.rtspSeq=1
 			# Write the RTSP request to be sent.
-			request = ("SETUP" + self.fileName + "\n" + str(self.rtspSeq) + "\n" + " RTSP/1.0 RTP/UDP " + str(self.rtpPort)).encode('utf-8')
-			self.rtspSocket.send(request)  #rtspSocket在connectToServer中是Socket的物件
+			request = ("SETUP"+"\n" + self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+
 			# Keep track of the sent request.
 			self.requestSent = self.SETUP
-		
+
 		# Play request
 		elif requestCode == self.PLAY and self.state == self.READY:
 
 			# Update RTSP sequence number.
 			self.rtspSeq+=1
-			
+
 			# Write the RTSP request to be sent.
-			request = ("PLAY" + "\n" + str(self.rtspSeq)).encode('utf-8')
+			request = ("PLAY" +"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
 			# Keep track of the sent request.
 			self.requestSent = self.PLAY
-		
+
 		# Pause request
 		elif requestCode == self.PAUSE and self.state == self.PLAYING:
 			pass
 			# Update RTSP sequence number.
 			self.rtspSeq+=1
-			
+
 			# Write the RTSP request to be sent.
-			request = ("PAUSE" + "\n" + str(self.rtspSeq)).encode('utf-8')
-			
+			request = ("PAUSE" +"\n"+"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+
 			# Keep track of the sent request.
 			self.requestSent = self.PAUSE
-			
+
 		# Teardown request
 		elif requestCode == self.TEARDOWN and not self.state == self.INIT:
 			pass
 			# Update RTSP sequence number.
 			self.rtspSeq+=1
-			
+
 			# Write the RTSP request to be sent.
-			request = ("TEARDOWN" + "\n" + str(self.rtspSeq)).encode('utf-8')
-			
+			request = ("TEARDOWN" +"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+
 			# Keep track of the sent request.
 			self.requestSent = self.TEARDOWN
 		else:
 			return
-		
-		# Send the RTSP request using rtspSocket.
-		# ...
 
-		print('\nData sent:\n') # 要加一個request
-	
+		# Send the RTSP request using rtspSocket.
+		self.rtspSocket.send(request)  # rtspSocket在connectToServer中是Socket的物件
+		print('\nData sent:\n'+ request.decode('utf-8'))
+
 	def recvRtspReply(self):
 		"""Receive RTSP reply from the server."""
 		while True:
@@ -222,6 +221,7 @@ class Client:
 	def parseRtspReply(self, data):
 		"""Parse the RTSP reply from the server."""
 		lines = data.split('\n')
+		print(lines)
 		seqNum = int(lines[1].split(' ')[1])
 		
 		# Process only if the server reply's sequence number is the same as the request's

@@ -1,6 +1,6 @@
 class VideoStream:
 	def __init__(self, filename):
-		self.filename = filename
+		self.filename = "movie.Mjpeg"
 		try:
 			self.file = open(filename, 'rb')
 		except:

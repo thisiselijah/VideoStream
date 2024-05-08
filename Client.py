@@ -158,7 +158,7 @@ class Client:
 			# Update RTSP sequence number.
 			self.rtspSeq=1
 			# Write the RTSP request to be sent.
-			request = ("SETUP"+"\n" + self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+			request = "SETUP "+ self.fileName + " RTSP/1.0 RTP/UDP"+ "\nCseq: "+str(self.rtspSeq) +"\ndest_port: "+str(self.rtpPort)
 
 			# Keep track of the sent request.
 			self.requestSent = self.SETUP
@@ -170,7 +170,7 @@ class Client:
 			self.rtspSeq+=1
 
 			# Write the RTSP request to be sent.
-			request = ("PLAY" +"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+			request = "PLAY " + self.fileName + " RTSP/1.0 RTP/UDP"+ "\nCseq: "+str(self.rtspSeq) +"\ndest_port: "+str(self.rtpPort)
 			# Keep track of the sent request.
 			self.requestSent = self.PLAY
 
@@ -181,7 +181,7 @@ class Client:
 			self.rtspSeq+=1
 
 			# Write the RTSP request to be sent.
-			request = ("PAUSE" +"\n"+"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+			request = "PAUSE "+ self.fileName + " RTSP/1.0 RTP/UDP"+ "\nCseq: "+str(self.rtspSeq) +"\ndest_port: "+str(self.rtpPort)
 
 			# Keep track of the sent request.
 			self.requestSent = self.PAUSE
@@ -193,7 +193,7 @@ class Client:
 			self.rtspSeq+=1
 
 			# Write the RTSP request to be sent.
-			request = ("TEARDOWN" +"\n"+ self.fileName + "\n" + str(self.rtspSeq) + "\n" + "RTSP/1.0 RTP/UDP" +"\n"+str(self.rtpPort)).encode('utf-8')
+			request = "TEARDOWN " + self.fileName + " RTSP/1.0 RTP/UDP"+ "\nCseq: "+str(self.rtspSeq) +"\ndest_port: "+str(self.rtpPort)
 
 			# Keep track of the sent request.
 			self.requestSent = self.TEARDOWN
@@ -201,8 +201,8 @@ class Client:
 			return
 
 		# Send the RTSP request using rtspSocket.
-		self.rtspSocket.send(request)  # rtspSocket在connectToServer中是Socket的物件
-		print('\nData sent:\n'+ request.decode('utf-8'))
+		self.rtspSocket.send(request.encode('utf-8'))  # rtspSocket在connectToServer中是Socket的物件
+		print('\nData sent:\n'+ request)
 
 	def recvRtspReply(self):
 		"""Receive RTSP reply from the server."""
@@ -210,7 +210,7 @@ class Client:
 			reply = self.rtspSocket.recv(1024)
 			
 			if reply: 
-				self.parseRtspReply(reply.decode("utf-8"))
+				self.parseRtspReply(reply)
 			
 			# Close the RTSP socket upon requesting Teardown
 			if self.requestSent == self.TEARDOWN:
@@ -220,8 +220,8 @@ class Client:
 	
 	def parseRtspReply(self, data):
 		"""Parse the RTSP reply from the server."""
-		lines = data.split('\n')
-		print(lines)
+		lines = data.decode().split('\n')
+	
 		seqNum = int(lines[1].split(' ')[1])
 		
 		# Process only if the server reply's sequence number is the same as the request's
@@ -266,7 +266,8 @@ class Client:
 		self.rtpSocket.settimeout(0.5)
 		try:
 			# Bind the socket to the address using the RTP port given by the client user
-			self.rtpSocket.bind((self.serverAddr, self.rtpPort))
+			self.state=self.READY
+			self.rtpSocket.bind(('', self.rtpPort))
 		except:
 			tkMessageBox.showwarning('Unable to Bind', 'Unable to bind PORT=%d' %self.rtpPort)
 

@@ -1,10 +1,11 @@
 from tkinter import *
 import tkinter.messagebox
 tkinter.messagebox
-from tkinter import messagebox 
+from tkinter import messagebox
 tkinter.messagebox
 from PIL import Image, ImageTk
 import socket, threading, sys, traceback, os
+import platform
 
 from RtpPacket import RtpPacket
 
@@ -36,6 +37,7 @@ class Client:
 	def __init__(self, master, serveraddr, serverport, rtpport, filename):
 		self.master = master
 		self.master.protocol("WM_DELETE_WINDOW", self.handler)
+		self.user_os = platform.system()
 		self.createWidgets()
 		self.serverAddr = serveraddr
 		self.serverPort = int(serverport)
@@ -47,10 +49,13 @@ class Client:
 		self.teardownAcked = 0
 		self.connectToServer()
 		self.frameNbr = 0
+
+
 		
 	def createWidgets(self):
 		"""Build GUI."""
 		# Create Setup button
+
 		self.setup = Button(self.master, width=20, padx=3, pady=3)
 		self.setup["text"] = "Setup"
 		self.setup["command"] = self.setupMovie
@@ -73,10 +78,32 @@ class Client:
 		self.teardown["text"] = "Teardown"
 		self.teardown["command"] =  self.exitClient
 		self.teardown.grid(row=1, column=3, padx=2, pady=2)
+
 		
 		# Create a label to display the movie
 		self.label = Label(self.master, height=19)
-		self.label.grid(row=0, column=0, columnspan=4, sticky=W+E+N+S, padx=5, pady=5) 
+		self.label.grid(row=0, column=0, columnspan=4, sticky=W+E+N+S, padx=5, pady=5)
+		#print("User's operating system:", user_os_string)
+		if str(self.user_os) == "Windows" :
+			self.menubar = Menu(self.master)
+			self.menubar.add_command(label="Speed")
+			self.master.config(menu=self.menubar)
+		else :
+			self.menubar = Menu(self.master)
+			self.menu_0 = Menu(self.menubar)
+			self.menu_1 = Menu(self.menu_0)
+
+			self.menu_1.add_command(label="x1.0")
+			self.menu_1.add_command(label="x1.5")
+			self.menu_1.add_command(label="x1.75")
+			self.menu_1.add_command(label="x2.0")
+			self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
+			self.menubar.add_cascade(label='Option', menu=self.menu_0)
+			self.master.config(menu=self.menubar)
+
+		#Width: 896, Height: 356
+
+
 	
 	def setupMovie(self):
 		"""Setup button handler."""
@@ -293,3 +320,8 @@ class Client:
 			self.exitClient()
 		else: # When the user presses cancel, resume playing.
 			self.playMovie()
+
+	def playSpeed(self):
+		label = self.filemenu.entrycget(0, 'label')
+		pass
+

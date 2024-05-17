@@ -12,9 +12,14 @@ if __name__ == "__main__":
 		print ("[Usage: ClientLauncher.py Server_name Server_port RTP_port Video_file]\n")	
 	
 	root = Tk()
-	
+	root.geometry("896x356")
+
 	# Create a new client
 	app = Client(root, 'localhost', '65535', '1024', 'movie.Mjpeg')
-	app.master.title("RTPClient")	
+	app.master.title("RTPClient")
+	root.update_idletasks()
+	# print(f"Window size - Width: {root.winfo_width()}, Height: {root.winfo_height()}")
+	# print(f"Button position - X: {app.teardown.winfo_x()}, Y: {app.teardown.winfo_y()}")
+
 	root.mainloop()
 	

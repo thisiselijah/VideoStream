@@ -27,9 +27,17 @@ class Client:
 	PLAY = 1
 	PAUSE = 2
 	TEARDOWN = 3
+
+	SPEED0 = 4
+	SPEED1 = 5
+	SPEED2 = 6
+	SPEED3 = 7
+	SPEED4 = 8
 	
 	RTSP_VER = "RTSP/1.0"
 	TRANSPORT = "RTP/UDP"
+
+	
 	
 	
 	
@@ -38,7 +46,9 @@ class Client:
 		self.master = master
 		self.master.protocol("WM_DELETE_WINDOW", self.handler)
 		self.user_os = platform.system()
+		self.speed = ['x0.5', 'x0.75', 'x1.0', 'x1.25', '1.5']
 		self.createWidgets()
+
 		self.serverAddr = serveraddr
 		self.serverPort = int(serverport)
 		self.rtpPort = int(rtpport)
@@ -49,6 +59,9 @@ class Client:
 		self.teardownAcked = 0
 		self.connectToServer()
 		self.frameNbr = 0
+
+		
+
 
 
 		
@@ -93,10 +106,11 @@ class Client:
 			self.menu_0 = Menu(self.menubar)
 			self.menu_1 = Menu(self.menu_0)
 
-			self.menu_1.add_command(label="x1.0")
-			self.menu_1.add_command(label="x1.5")
-			self.menu_1.add_command(label="x1.75")
-			self.menu_1.add_command(label="x2.0")
+			self.var = StringVar(value="")
+			for element in self.speed:
+				if element=='x1.0':
+					self.var.set(element)
+				self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
 			self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
 			self.menubar.add_cascade(label='Option', menu=self.menu_0)
 			self.master.config(menu=self.menubar)
@@ -129,6 +143,26 @@ class Client:
 			self.playEvent = threading.Event()
 			self.playEvent.clear()
 			self.sendRtspRequest(self.PLAY)
+	def playSpeed(self):
+		try:
+			ps = self.var.get()
+			if ps == 'x0.5':
+				self.sendRtspRequest(self.SPEED0)
+			elif ps == 'x0.75':
+				self.sendRtspRequest(self.SPEED1)
+			elif ps == 'x1.0':
+				self.sendRtspRequest(self.SPEED2)
+			elif ps == 'x1.25':
+				self.sendRtspRequest(self.SPEED3)
+			elif ps == 'x1.5':
+				self.sendRtspRequest(self.SPEED4)
+			else:
+				self.sendRtspRequest(self.SPEED2)
+		except:
+			pass
+		
+
+
 	
 	def listenRtp(self):		
 		"""Listen for RTP packets."""
@@ -211,7 +245,7 @@ class Client:
 
 		# Pause request
 		elif requestCode == self.PAUSE and self.state == self.PLAYING:
-			pass
+			
 			# Update RTSP sequence number.
 			self.rtspSeq+=1
 
@@ -223,7 +257,7 @@ class Client:
 
 		# Teardown request
 		elif requestCode == self.TEARDOWN and not self.state == self.INIT:
-			pass
+			
 			# Update RTSP sequence number.
 			self.rtspSeq+=1
 
@@ -232,6 +266,17 @@ class Client:
 
 			# Keep track of the sent request.
 			self.requestSent = self.TEARDOWN
+
+		elif requestCode == self.SPEED0:
+			pass
+		elif requestCode == self.SPEED1:
+			pass
+		elif requestCode == self.SPEED2:
+			pass
+		elif requestCode == self.SPEED3:
+			pass
+		elif requestCode == self.SPEED4:
+			pass
 		else:
 			return
 
@@ -320,8 +365,4 @@ class Client:
 			self.exitClient()
 		else: # When the user presses cancel, resume playing.
 			self.playMovie()
-
-	def playSpeed(self):
-		label = self.filemenu.entrycget(0, 'label')
-		pass
-
+	

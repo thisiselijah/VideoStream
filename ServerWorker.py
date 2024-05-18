@@ -33,7 +33,7 @@ class ServerWorker:
 		while True:            
 			data = connSocket.recv(256)
 			if data:
-				print ("DATA RECEIVED: \n", data)
+				print ("DATA RECEIVED: \n"+data.decode('utf-8'))
 				self.processRtspRequest(data)
 	
 	def processRtspRequest(self, data):

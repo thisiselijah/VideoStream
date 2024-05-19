@@ -90,25 +90,31 @@ class Client:
         self.label = Label(self.master, height=19)
         self.label.grid(row=0, column=0, columnspan=4, sticky=W + E + N + S, padx=5, pady=5)
         # print("User's operating system:", user_os_string)
-        if str(self.user_os) == "Windows":
-            self.menubar = Menu(self.master)
-            self.menubar.add_command(label="Speed")
-            self.master.config(menu=self.menubar)
-        else:
-            self.menubar = Menu(self.master)
-            self.menu_0 = Menu(self.menubar)
-            self.menu_1 = Menu(self.menu_0)
 
+        if str(self.user_os) == "Windows":
+            self.menu_0 = Menu(self.master)
+            self.menu_1 = Menu(self.menu_0)
             self.var = StringVar(value="")
             for element in self.speed:
                 if element == 'x1.0':
                     self.var.set(element)
                 self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
+                self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
+                self.master.config(menu=self.menu_0)
+        else:
+            self.menubar = Menu(self.master)
+            self.menu_0 = Menu(self.menubar)
+            self.menu_1 = Menu(self.menu_0)
+            self.var = StringVar(value="")
+            for element in self.speed:
+                if element == 'x1.0':
+                    self.var.set(element)
+            self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
             self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
             self.menubar.add_cascade(label='Option', menu=self.menu_0)
             self.master.config(menu=self.menubar)
 
-    # Width: 896, Height: 356
+# Width: 896, Height: 356
 
     def setupMovie(self):
         """Setup button handler."""

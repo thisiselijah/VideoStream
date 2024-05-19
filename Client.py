@@ -146,18 +146,23 @@ class Client:
             ps = self.var.get()
             if ps == 'x0.5' and self.scale != 0.5:
                 self.scale = 0.5
+                self.sendRtspRequest(self.PAUSE)
                 self.sendRtspRequest(self.SPEED0)
             elif ps == 'x0.75' and self.scale != 0.75:
                 self.scale = 0.75
+                self.sendRtspRequest(self.PAUSE)
                 self.sendRtspRequest(self.SPEED1)
             elif ps == 'x1.0' and self.scale != 1.0:
                 self.scale = 1.0
+                self.sendRtspRequest(self.PAUSE)
                 self.sendRtspRequest(self.SPEED2)
             elif ps == 'x1.25' and self.scale != 1.25:
                 self.scale = 1.25
+                self.sendRtspRequest(self.PAUSE)
                 self.sendRtspRequest(self.SPEED3)
             elif ps == 'x1.5' and self.scale != 1.5:
                 self.scale = 1.5
+                self.sendRtspRequest(self.PAUSE)
                 self.sendRtspRequest(self.SPEED4)
             else:
                 self.scale = 1.0

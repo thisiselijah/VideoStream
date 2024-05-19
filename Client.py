@@ -98,9 +98,9 @@ class Client:
             for element in self.speed:
                 if element == 'x1.0':
                     self.var.set(element)
-                self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
-                self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
-                self.master.config(menu=self.menu_0)
+                    self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
+            self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
+            self.master.config(menu=self.menu_0)
         else:
             self.menubar = Menu(self.master)
             self.menu_0 = Menu(self.menubar)
@@ -109,7 +109,7 @@ class Client:
             for element in self.speed:
                 if element == 'x1.0':
                     self.var.set(element)
-            self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
+                self.menu_1.add_radiobutton(label=element, variable=self.var, value=element, command=self.playSpeed)
             self.menu_0.add_cascade(label='Speed', menu=self.menu_1)
             self.menubar.add_cascade(label='Option', menu=self.menu_0)
             self.master.config(menu=self.menubar)

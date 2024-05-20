@@ -3,6 +3,7 @@ import sys, traceback, threading, socket
 
 from VideoStream import VideoStream
 from RtpPacket import RtpPacket
+import time
 
 
 class ServerWorker:
@@ -91,6 +92,9 @@ class ServerWorker:
 
             if self.state == self.READY or self.state == self.PLAYING:
                 print("Process: PLAY\n")
+                """if self.state == self.PLAYING:
+                    self.clientInfo['event'].set()
+                    self.clientInfo['worker'].join()"""
                 self.state = self.PLAYING
 
                 # Create a new socket for RTP/UDP
@@ -100,6 +104,7 @@ class ServerWorker:
 
                 # Create a new thread and start sending RTP packets
                 self.clientInfo['event'] = threading.Event()
+                """self.clientInfo['event'].clear()"""
                 self.clientInfo['worker'] = threading.Thread(target=self.sendRtp, args=(t,))
                 self.clientInfo['worker'].start()
 
@@ -127,7 +132,8 @@ class ServerWorker:
     def sendRtp(self, t):
         """Send RTP packets over UDP."""
         while True:
-            self.clientInfo['event'].wait(0.05 / t)  # use it to change the play speed
+            """start_time = time.time()"""
+            self.clientInfo['event'].wait(0.05/t)  # use it to change the play speed
 
             # Stop sending if request is PAUSE or TEARDOWN
             if self.clientInfo['event'].isSet():
@@ -142,6 +148,12 @@ class ServerWorker:
                     self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber), (address, port))
                 except:
                     print("Connection Error")
+                
+
+            """elapsed_time = time.time() - start_time
+            sleep_time = max(0, (0.05 / t) + elapsed_time)
+            if sleep_time > 0:
+                time.sleep(sleep_time)"""
             # print '-'*60
             # traceback.print_exc(file=sys.stdout)
             # print '-'*60

@@ -15,7 +15,7 @@ if __name__ == "__main__":
 	root.geometry("896x356")
 
 	# Create a new client
-	app = Client(root, 'localhost', '65535', '1024', 'movie.Mjpeg')
+	app = Client(root, 'localhost', '50000', '1024', 'movie.Mjpeg')
 	app.master.title("RTPClient")
 	root.update_idletasks()
 	# print(f"Window size - Width: {root.winfo_width()}, Height: {root.winfo_height()}")

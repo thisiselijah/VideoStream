@@ -144,9 +144,7 @@ class ServerWorker:
                 frameNumber = self.clientInfo['videoStream'].frameNbr()
                 try:
                     address = self.clientInfo['rtspSocket'][1][0]
-                    print(address)
                     port = int(self.clientInfo['rtpPort'])
-                    print(port)
                     self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber), (address, port))
                 except:
                     print("Connection Error")
@@ -167,7 +165,7 @@ class ServerWorker:
         extension = 0
         cc = 0
         marker = 0
-        pt = 26  # MJPEG type
+        pt = 26 # MJPEG type
         seqnum = frameNbr
         ssrc = 0
 

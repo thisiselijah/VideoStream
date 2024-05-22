@@ -1,3 +1,4 @@
+"""Transforming mpeg into Mjepg"""
 """import ffmpeg
 
 # Input and output file paths
@@ -15,6 +16,7 @@ try:
 	print(f"Conversion successful: {output_file}")
 except ffmpeg.Error as e:
 	print(f"Error: {e.stderr.decode()}")"""
+import sys
 class VideoStream:
 	def __init__(self, filename):
 		self.filename = filename
@@ -22,6 +24,8 @@ class VideoStream:
 			self.file = open(filename, 'rb')
 		except:
 			raise IOError
+		
+		
 	def getData(self):
 		framelength = self.getFrameLength()
 		framelength = int(framelength)
@@ -55,6 +59,8 @@ class VideoStream:
 
 
 if __name__ == "__main__":
-	video = VideoStream('output.Mjpeg')
-	
+	fileName = sys.argv[1]
+	video = VideoStream(fileName)
+	print('Data Length: ' + str(video.getFrameLength()) + '\nData:')
 	print(video.getData())
+	

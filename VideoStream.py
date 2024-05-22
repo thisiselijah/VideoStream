@@ -3,8 +3,10 @@ class VideoStream:
 		self.filename = filename
 		try:
 			self.file = open(filename, 'rb')
+			#os.remove(CACHE_FILE_NAME + str(self.sessionId) + CACHE_FILE_EXT)
 		except:
 			raise IOError
+
 		self.frameNum = 0
 	def getFrameLength(self):
 		"""Get the length of the next frame."""
@@ -25,6 +27,7 @@ class VideoStream:
 							if next_byte == b'\xd9':  # Found EOI
 								end_position = self.file.tell()
 								return end_position - start_position
+   
 
 	def nextFrame(self):
 		"""Get next frame."""
@@ -43,6 +46,7 @@ class VideoStream:
 			framelength = self.getFrameLength()
 			framelength = int(framelength)
 			data = self.file.read(framelength)
+			self.frameNum += 1
 		return data
 		
 	def frameNbr(self):

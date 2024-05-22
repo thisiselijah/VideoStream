@@ -2,8 +2,8 @@ import cv2
 
 
 # 输入和输出文件路徑
-input_file = 'in.mp4'
-output_file = 'outputTest.Mjpeg'
+input_file = 'huh.mp4'
+output_file = 'huh.Mjpeg'
 
 # 打開输入影片文件
 cap = cv2.VideoCapture(input_file)

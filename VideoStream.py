@@ -2,7 +2,7 @@ class VideoStream:
 	def __init__(self, filename):
 		self.filename = filename
 		try:
-			self.file = open('./data/'+filename, 'rb')
+			self.file = open(filename, 'rb')
 		except:
 			raise IOError
 
@@ -46,6 +46,7 @@ class VideoStream:
 			framelength = int(framelength)
 			data = self.file.read(framelength)
 			self.frameNum += 1
+		print(self.frameNum)
 		return data
 		
 	def frameNbr(self):

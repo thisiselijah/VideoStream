@@ -176,7 +176,7 @@ class Client:
         while True:
             try:
                 print("LISTENING...")
-                data = self.rtpSocket.recv(20480)
+                data = self.rtpSocket.recv(20480) #default 20480
                 if data:
                     rtpPacket = RtpPacket()
                     rtpPacket.decode(data)
@@ -187,6 +187,7 @@ class Client:
                     if currFrameNbr > self.frameNbr:  # Discard the late packet
                         self.frameNbr = currFrameNbr
                         self.updateMovie(self.writeFrame(rtpPacket.getPayload()))
+                
             except:
                 # Stop listening upon requesting PAUSE or TEARDOWN
                 if self.playEvent.isSet():

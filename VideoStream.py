@@ -2,8 +2,7 @@ class VideoStream:
 	def __init__(self, filename):
 		self.filename = filename
 		try:
-			self.file = open(filename, 'rb')
-			#os.remove(CACHE_FILE_NAME + str(self.sessionId) + CACHE_FILE_EXT)
+			self.file = open('./data/'+filename, 'rb')
 		except:
 			raise IOError
 

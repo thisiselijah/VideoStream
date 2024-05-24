@@ -8,6 +8,8 @@ tkinter.messagebox
 from PIL import Image, ImageTk
 import socket, threading, sys, traceback, os
 import platform
+import cv2
+import os
 
 from RtpPacket import RtpPacket
 CACHE_FILE_NAME = "cache-"
@@ -51,6 +53,29 @@ class Client:
         self.teardownAcked = 0
         self.connectToServer()
         self.frameNbr = 0
+
+
+        if  self.check_mjpeg_exists():
+            self.update_filename_extension()
+        else:
+            self.convert()
+            self.update_filename_extension()
+
+    def update_filename_extension(self):
+        base, ext = os.path.splitext(self.fileName)
+        if ext.lower() == '.mp4':
+            self.fileName = f"{base}.mjpeg"
+
+    def check_mjpeg_exists(self):
+        # 获取文件名（不包括扩展名）
+        base_name = os.path.splitext(self.fileName)[0]
+        # 获取文件夹路径
+        folder_path = os.path.dirname(self.fileName)
+        # 构造 mjpeg 文件名
+        mjpeg_filename = f"{base_name}.mjpeg"
+        # 检查 mjpeg 文件是否存在于文件夹内
+
+        return os.path.exists(mjpeg_filename)
 
     def createWidgets(self):
         """Build GUI."""
@@ -353,3 +378,46 @@ class Client:
             self.exitClient()
         else:  # When the user presses cancel, resume playing.
             self.playMovie()
+
+    def convert(self):
+        input_file = self.fileName
+
+        # 獲取文件名（不包括擴展名）
+        base_name = os.path.splitext(input_file)[0]
+
+        # 生成输出文件路徑，將擴展名替換為 .mjpeg
+        output_file = f'{base_name}.mjpeg'
+
+        # 打開输入影片文件
+        cap = cv2.VideoCapture(input_file)
+
+        if not cap.isOpened():
+            print(f"無法打開輸入文件 {input_file}")
+            exit()
+
+        # 獲取影片的宽度、高度和帧率
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+
+        # 檢查影片属性是否讀取成功
+        if frame_width == 0 or frame_height == 0 or fps == 0:
+            print("無法讀取影片属性")
+            cap.release()
+            exit()
+
+        # 定義 MJPEG 編碼和創建 VideoWriter 對象
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+        out = cv2.VideoWriter(output_file, fourcc, fps, (frame_width, frame_height))
+
+        if not out.isOpened():
+            print(f"無法建立输出文件 {output_file}")
+            cap.release()
+            exit()
+
+        # 逐帧讀取並寫入输出文件
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            out.write(frame)

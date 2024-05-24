@@ -10,7 +10,6 @@ import socket, threading, sys, traceback, os
 import platform
 
 from RtpPacket import RtpPacket
-
 CACHE_FILE_NAME = "cache-"
 CACHE_FILE_EXT = ".jpg"
 
@@ -29,12 +28,6 @@ class Client:
     PLAY = 1
     PAUSE = 2
     TEARDOWN = 3
-
-    SPEED0 = 4
-    SPEED1 = 5
-    SPEED2 = 6
-    SPEED3 = 7
-    SPEED4 = 8
 
     RTSP_VER = "RTSP/1.0"
     TRANSPORT = "RTP/UDP"
@@ -142,41 +135,37 @@ class Client:
             self.sendRtspRequest(self.PLAY)
 
     def playSpeed(self):
-        try:
-            ps = self.var.get()
-            if ps == 'x0.5' and self.scale != 0.5:
-                self.scale = 0.5
+        origin = self.scale
+
+        ps = self.var.get()
+        scale_dict = {
+            'x0.5': 0.5,
+            'x0.75': 0.75,
+            'x1.0': 1.0,
+            'x1.25': 1.25,
+            'x1.5': 1.5
+        }
+        if origin != scale_dict.get(ps, 1.0):
+            self.scale = scale_dict.get(ps, 1.0)
+
+        if self.state == self.READY:
+            pass
+        elif self.state == self.PLAYING:
+            try:
                 self.sendRtspRequest(self.PAUSE)
-                self.sendRtspRequest(self.SPEED0)
-            elif ps == 'x0.75' and self.scale != 0.75:
-                self.scale = 0.75
-                self.sendRtspRequest(self.PAUSE)
-                self.sendRtspRequest(self.SPEED1)
-            elif ps == 'x1.0' and self.scale != 1.0:
-                self.scale = 1.0
-                self.sendRtspRequest(self.PAUSE)
-                self.sendRtspRequest(self.SPEED2)
-            elif ps == 'x1.25' and self.scale != 1.25:
-                self.scale = 1.25
-                self.sendRtspRequest(self.PAUSE)
-                self.sendRtspRequest(self.SPEED3)
-            elif ps == 'x1.5' and self.scale != 1.5:
-                self.scale = 1.5
-                self.sendRtspRequest(self.PAUSE)
-                self.sendRtspRequest(self.SPEED4)
-            else:
-                self.scale = 1.0
-            print(ps)
-            print(self.scale)
-        except Exception as e:
-            print(f"Error in playSpeed: {e}")
+                self.state = self.READY
+                self.sendRtspRequest(self.PLAY)
+                print(ps)
+                print(self.scale)
+            except Exception as e:
+                print(f"Error in playSpeed: {e}")
 
     def listenRtp(self):
         """Listen for RTP packets."""
         while True:
             try:
                 print("LISTENING...")
-                data = self.rtpSocket.recv(20480) #default 20480
+                data = self.rtpSocket.recv(204800) #default 20480
                 if data:
                     rtpPacket = RtpPacket()
                     rtpPacket.decode(data)
@@ -279,35 +268,9 @@ class Client:
 
             # Keep track of the sent request.
             self.requestSent = self.TEARDOWN
-
-        elif requestCode == self.SPEED0:
-            self.rtspSeq += 1
-            request = "PLAY " + self.fileName + " RTSP/1.0" + "\nCseq: " + str(self.rtspSeq) + "\nScale: " + str(
-                self.scale) + "\nTransport: RTP/UDP; dest_port: " + str(self.rtpPort)
-            self.requestSent = self.PLAY
-        elif requestCode == self.SPEED1:
-            self.rtspSeq += 1
-            request = "PLAY " + self.fileName + " RTSP/1.0" + "\nCseq: " + str(self.rtspSeq) + "\nScale: " + str(
-                self.scale) + "\nTransport: RTP/UDP; dest_port: " + str(self.rtpPort)
-            self.requestSent = self.PLAY
-        elif requestCode == self.SPEED2:
-            self.rtspSeq += 1
-            request = "PLAY " + self.fileName + " RTSP/1.0" + "\nCseq: " + str(self.rtspSeq) + "\nScale: " + str(
-                self.scale) + "\nTransport: RTP/UDP; dest_port: " + str(self.rtpPort)
-            self.requestSent = self.PLAY
-        elif requestCode == self.SPEED3:
-            self.rtspSeq += 1
-            request = "PLAY " + self.fileName + " RTSP/1.0" + "\nCseq: " + str(self.rtspSeq) + "\nScale: " + str(
-                self.scale) + "\nTransport: RTP/UDP; dest_port: " + str(self.rtpPort)
-            self.requestSent = self.PLAY
-        elif requestCode == self.SPEED4:
-            self.rtspSeq += 1
-            request = "PLAY " + self.fileName + " RTSP/1.0" + "\nCseq: " + str(self.rtspSeq) + "\nScale: " + str(
-                self.scale) + "\nTransport: RTP/UDP; dest_port: " + str(self.rtpPort)
-            self.requestSent = self.PLAY
         else:
             return
-
+        print(self.state)
         # Send the RTSP request using rtspSocket.
         self.rtspSocket.send(request.encode('utf-8'))  # rtspSocket在connectToServer中是Socket的物件
         print('\nData sent:\n' + request)

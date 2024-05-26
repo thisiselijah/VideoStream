@@ -133,7 +133,7 @@ class ServerWorker:
         """Send RTP packets over UDP."""
         while True:
             """start_time = time.time()"""
-            self.clientInfo['event'].wait(0.05/t)  # use it to change the play speed
+            self.clientInfo['event'].wait(0.05 / t)  # use it to change the play speed
 
             # Stop sending if request is PAUSE or TEARDOWN
             if self.clientInfo['event'].isSet():
@@ -148,7 +148,6 @@ class ServerWorker:
                     self.clientInfo['rtpSocket'].sendto(self.makeRtp(data, frameNumber), (address, port))
                 except:
                     print("Connection Error")
-                
 
             """elapsed_time = time.time() - start_time
             sleep_time = max(0, (0.05 / t) + elapsed_time)
@@ -165,7 +164,7 @@ class ServerWorker:
         extension = 0
         cc = 0
         marker = 0
-        pt = 26 # MJPEG type
+        pt = 26  # MJPEG type
         seqnum = frameNbr
         ssrc = 0
 

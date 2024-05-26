@@ -54,7 +54,7 @@ class Client:
         self.connectToServer()
         self.frameNbr = 0
 
-
+        #若不是 mjpeg檔 將mp4轉為mjpeg
         if  self.check_mjpeg_exists():
             self.update_filename_extension()
         else:
@@ -62,18 +62,16 @@ class Client:
             self.update_filename_extension()
 
     def update_filename_extension(self):
+        #取得檔案名
         base, ext = os.path.splitext(self.fileName)
         if ext.lower() == '.mp4':
             self.fileName = f"{base}.mjpeg"
 
     def check_mjpeg_exists(self):
-        # 获取文件名（不包括扩展名）
+        # 檢查 mjpeg 文件是否存在於文件夾內
         base_name = os.path.splitext(self.fileName)[0]
-        # 获取文件夹路径
         folder_path = os.path.dirname(self.fileName)
-        # 构造 mjpeg 文件名
         mjpeg_filename = f"{base_name}.mjpeg"
-        # 检查 mjpeg 文件是否存在于文件夹内
 
         return os.path.exists(mjpeg_filename)
 
